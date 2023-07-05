@@ -20,13 +20,14 @@
 		});
 
 		socket.on("newLog", (message: {
-
 				event: string,
 				timestamp: number,
 				data: object
 		}) => {
 			const newKey = Date.now();
 			data[newKey] = message;
+
+			console.log(message);
 		});
 
 		
@@ -36,11 +37,23 @@
 		window.scrollTo(0, document.body.scrollHeight);
 	});
 
-	async function clearLogs() {
+	async function deleteLogs() {
 		await fetch('/api/logs', {
 			method: 'DELETE'
 		});
 
+		data = {};
+	}
+
+	async function refreshLogs() {
+		const response = await fetch('/api/logs', {
+			method: 'GET'
+		});
+
+		data = await response.json();
+	}
+
+	function clearLogs() {
 		data = {};
 	}
 
@@ -60,8 +73,12 @@
 </svelte:head>
 
 <section>
-	<h1>Logs</h1>
-	<button class="clear-button" on:click={clearLogs}>Clear logs</button>
+	<div class="buttons">
+		<button class="clear-button danger" on:click={deleteLogs}>Delete logs</button>
+		<button class="clear-button" on:click={clearLogs}>Clear logs</button>
+		<button class="clear-button refresh-button" on:click={refreshLogs}>Refresh</button>
+	</div>
+
 	<div class="logs">
 
 		{#each Object.entries(data) as [key, log]}
@@ -88,9 +105,24 @@
 		justify-content: flex-start;
 	}
 
-	.clear-button {
-		align-self: flex-end;
+	.buttons {
+		justify-content: flex-end;
 		margin-bottom: 20px;
+		display: flex;
+	}
+
+	.clear-button {
+		margin-left: 5px;
+		padding: 5px;
+		border-radius: 4px;
+		border: 1px solid #AFAFAF;
+		cursor: pointer;
+	}
+
+	.danger {
+		background: red;
+		border: darkred;
+		color: white;
 	}
 
 	.logs {
