@@ -36,6 +36,14 @@
 		window.scrollTo(0, document.body.scrollHeight);
 	});
 
+	async function clearLogs() {
+		await fetch('/api/logs', {
+			method: 'DELETE'
+		});
+
+		data = {};
+	}
+
 
 
 </script>
@@ -53,8 +61,9 @@
 
 <section>
 	<h1>Logs</h1>
-	
+	<button class="clear-button" on:click={clearLogs}>Clear logs</button>
 	<div class="logs">
+
 		{#each Object.entries(data) as [key, log]}
 			<div class="log">
 				<div class="log-header">
@@ -77,6 +86,11 @@
 		display: flex;
 		flex-direction: column;
 		justify-content: flex-start;
+	}
+
+	.clear-button {
+		align-self: flex-end;
+		margin-bottom: 20px;
 	}
 
 	.logs {

@@ -7,3 +7,9 @@ export async function GET() {
 
 	return json(logs);
 }
+
+export async function DELETE() {
+	await redis.del('logs');
+
+	return new Response(undefined, { status: 201 });
+}
