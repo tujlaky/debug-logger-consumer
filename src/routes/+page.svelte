@@ -1,15 +1,43 @@
 <script lang="ts">
-	import Highlight from "svelte-highlight";
+	import Highlight, { LineNumbers } from "svelte-highlight";
   import json from "svelte-highlight/languages/json";
   import atomOneDark from "svelte-highlight/styles/atom-one-dark";
 	import { format } from 'date-fns';
+	import { io } from 'socket.io-client';
+	import { afterUpdate, onMount } from "svelte";
 
 	export let data: { [key: string]: {
 		event: string,
 		timestamp: number,
 		data: object
 	}};
-	console.log(data);
+
+	onMount(async () => {
+		const socket = io();
+
+		socket.on("connect", () => {
+			console.log(socket.id); // x8WIv7-mJelg7on_ALbx
+		});
+
+		socket.on("newLog", (message: {
+
+				event: string,
+				timestamp: number,
+				data: object
+		}) => {
+			const newKey = Date.now();
+			data[newKey] = message;
+		});
+
+		
+  });
+
+	afterUpdate(() => {
+		window.scrollTo(0, document.body.scrollHeight);
+	});
+
+
+
 </script>
 
 <svelte:head>
@@ -34,7 +62,8 @@
 				</div>
 				
 				{#if log.data}
-				<Highlight language={json} code={JSON.stringify(log.data)} />
+				<Highlight language={json} code={JSON.stringify(log.data, null, 2)} let:highlighted>
+				</Highlight>
 				{/if}
 				
 			</div>
