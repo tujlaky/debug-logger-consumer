@@ -43,6 +43,7 @@
 		});
 
 		data = {};
+		console.clear();
 	}
 
 	async function refreshLogs() {
@@ -51,10 +52,12 @@
 		});
 
 		data = await response.json();
+		console.log(data);
 	}
 
 	function clearLogs() {
 		data = {};
+		console.clear();
 	}
 
 
